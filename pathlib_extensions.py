@@ -3,7 +3,7 @@ import pathlib
 from subprocess_wrappers import subprocessWrappers
 
 
-def mkdir_hidden(self):
+def mkdir_hidden(self) -> pathlib.Path:
     """
     Returns:
         pathlib.Path: A path with a leading '.'.

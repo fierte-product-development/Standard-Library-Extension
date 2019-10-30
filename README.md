@@ -1,2 +1,34 @@
+# Install
+`pip install git+https://github.com/fierte-product-development/Modules`
+
 # Modules
-全プロジェクト共通で使うモジュール群
+* logging_wrappers.py
+
+	Returns configured logger and log file path.  
+	If you pass directory path to second argument, logger will save log to file.
+	```python
+	from logging_wrappers import loggingWrappers
+
+	logger, log_file = loggingWrappers.getLogger(name, output_dir)
+	logger.info('log!')
+	```
+
+* subprocess_wrappers.py
+
+	Returned CompletedProcess object has encoded stdout and stderr attributes.
+	```python
+	from subprocess_wrappers import subprocessWrappers
+
+	cp = subprocessWrappers.run('attrib', __file__, shell=True)
+	print(cp.stdout)
+	```
+
+* pathlib_extensions.py
+
+	Makes hidden directory on Windows/Linux.
+	```python
+	import pathlib
+	import pathlib_extensions  # noqa
+
+	hidden_folder = (pathlib.Path(__file__).parent/'hidden_folder').mkdir_hidden()
+	```

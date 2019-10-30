@@ -1,5 +1,7 @@
 import unittest
 import pathlib
+import tempfile
+import shutil
 
 from subprocess_wrappers import subprocessWrappers
 import pathlib_extensions  # noqa
@@ -8,12 +10,14 @@ import pathlib_extensions  # noqa
 class mkdir_hidden(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.sdir = pathlib.Path(__file__).parent / 'test'
+        parent_dir = pathlib.Path(__file__).parent
+        cls.temp_dir = pathlib.Path(tempfile.mkdtemp(dir=parent_dir))
+        cls.sdir = cls.temp_dir / 'test'
         cls.edir = cls.sdir.mkdir_hidden()
 
     @classmethod
     def tearDownClass(cls):
-        cls.edir.rmdir()
+        shutil.rmtree(cls.temp_dir)
 
     def test_first_character_of_directory_name_is_a_dot(self):
         edir = self.sdir.parent / f'.{self.sdir.name}'
