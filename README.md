@@ -7,7 +7,7 @@
 	Returns configured logger and log file path.  
 	If you pass directory path to second argument, logger will save log to file.
 	```python
-	from logging_wrappers import loggingWrappers
+	from fmodules.logging_wrappers import loggingWrappers
 
 	logger, log_file = loggingWrappers.getLogger(name, output_dir)
 	logger.info('log!')
@@ -17,7 +17,7 @@
 
 	Returned CompletedProcess object has encoded stdout and stderr attributes.
 	```python
-	from subprocess_wrappers import subprocessWrappers
+	from fmodules.subprocess_wrappers import subprocessWrappers
 
 	cp = subprocessWrappers.run('attrib', __file__, shell=True)
 	print(cp.stdout)
@@ -28,7 +28,7 @@
 	Makes hidden directory on Windows/Linux.
 	```python
 	import pathlib
-	import pathlib_extensions  # noqa
+	import fmodules.pathlib_extensions  # noqa
 
 	hidden_folder = (pathlib.Path(__file__).parent/'hidden_folder').mkdir_hidden()
 	```
