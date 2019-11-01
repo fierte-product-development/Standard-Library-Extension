@@ -7,9 +7,11 @@
 	Returns configured logger and log file path.  
 	If you pass directory path to second argument, logger will save log to file.
 	```python
+	import pathlib
 	from fmodules.logging_wrappers import loggingWrappers
 
-	logger, log_file = loggingWrappers.getLogger(name, output_dir)
+	output_dir = pathlib.Path(__file__).parent
+	logger, log_file = loggingWrappers.getLogger(__name__, output_dir)
 	logger.info('log!')
 	```
 

@@ -45,7 +45,7 @@ class loggingWrappers:
         }))
         if output_dir:
             log_dir = (output_dir/'log').mkdir_hidden()
-            log_file = log_dir / f'{name}.log'
+            log_file = log_dir / f'{output_dir.resolve().name}.log'
             logger.addHandler(cls._NewHandler(FileHandler, **{
                 'filename': log_file,
                 'encoding': 'utf-8',
