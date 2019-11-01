@@ -1,6 +1,6 @@
 import pathlib
 
-from .subprocess_wrappers import subprocessWrappers
+from fmodules.subprocess_wrappers import subprocessWrappers
 
 
 def mkdir_hidden(self) -> pathlib.Path:

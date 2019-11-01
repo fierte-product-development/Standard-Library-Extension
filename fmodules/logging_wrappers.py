@@ -3,7 +3,7 @@ from typing import Tuple, Optional
 import pathlib
 import sys
 
-import .pathlib_extensions  # noqa
+import fmodules.pathlib_extensions  # noqa
 
 
 class loggingWrappers:
