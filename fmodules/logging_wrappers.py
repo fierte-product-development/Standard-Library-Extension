@@ -2,6 +2,7 @@ from logging import Logger, getLogger, Filter, Formatter, Handler, StreamHandler
 from typing import Tuple, Optional
 import pathlib
 import sys
+import json
 
 import fmodules.pathlib_extensions  # noqa
 
@@ -51,3 +52,19 @@ class loggingWrappers:
                 'encoding': 'utf-8',
             }))
         return logger, log_file if output_dir else None
+
+    @staticmethod
+    def GetLogMessages(name, saved_dir: pathlib.Path) -> dict:
+        with open(saved_dir/'messages.json', encoding='utf-8') as json_:
+            msg = json.loads(json_.read())
+        return msg[name]
+
+    @classmethod
+    def GetLoggingKit(cls, logger_name, root_dir: pathlib.Path, debug=False) -> Tuple[Logger, dict]:
+        """
+        Return logger and log message dictionary.
+        Log message dictionary must be saved as 'messages.json'.
+        """
+        logger, _ = cls.getLogger(logger_name, root_dir if not debug else None)
+        log_messages = cls.GetLogMessages(logger_name, root_dir)
+        return logger, log_messages

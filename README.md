@@ -4,16 +4,20 @@
 # Modules
 * logging_wrappers.py
 
-	Returns configured logger and log file path.  
-	If you pass directory path to second argument, logger will save log to file.
+	Returns configured logger and log message dictionary.  
+	The original log messages must be saved as 'messages.json'.  
+	If you pass the True to third argument, logger will not save log to file.
 	```python
 	import pathlib
 	from fmodules.logging_wrappers import loggingWrappers
 
-	output_dir = pathlib.Path(__file__).parent
-	logger, log_file = loggingWrappers.getLogger(__name__, output_dir)
+	me = pathlib.Path(__file__)
+	logger, msg = loggingWrappers.GetLoggingKit(me.stem, me.parent)
 	logger.info('log!')
+	logger.debug(msg['test'])
 	```
+
+	You can also get logger and log messages, using their respective functions.
 
 * subprocess_wrappers.py
 
