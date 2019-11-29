@@ -57,7 +57,7 @@ class loggingWrappers:
     def GetLogMessages(name, saved_dir: pathlib.Path) -> dict:
         with open(saved_dir/'messages.json', encoding='utf-8') as json_:
             msg = AttrDict(json.loads(json_.read()))
-        return msg.name
+        return msg[name]
 
     @classmethod
     def GetLoggingKit(cls, logger_name, root_dir: pathlib.Path, debug=False) -> Tuple[Logger, dict]:
