@@ -4,7 +4,6 @@ import pathlib
 import sys
 import json
 
-from attrdict import AttrDict
 import fmodules.pathlib_extensions  # noqa
 
 class loggingWrappers:
@@ -56,7 +55,7 @@ class loggingWrappers:
     @staticmethod
     def GetLogMessages(name, saved_dir: pathlib.Path) -> dict:
         with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-            msg = AttrDict(json.loads(json_.read()))
+            msg = json.loads(json_.read())
         return msg[name]
 
     @classmethod
