@@ -4,8 +4,8 @@ import pathlib
 import sys
 import json
 
+from attrdict import AttrDict
 import fmodules.pathlib_extensions  # noqa
-
 
 class loggingWrappers:
     _formatter = Formatter('%(levelname)8s %(asctime)s [%(name)s] %(message)s%(ex_func)s')
@@ -56,8 +56,8 @@ class loggingWrappers:
     @staticmethod
     def GetLogMessages(name, saved_dir: pathlib.Path) -> dict:
         with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-            msg = json.loads(json_.read())
-        return msg[name]
+            msg = AttrDict(json.loads(json_.read()))
+        return msg.name
 
     @classmethod
     def GetLoggingKit(cls, logger_name, root_dir: pathlib.Path, debug=False) -> Tuple[Logger, dict]:
