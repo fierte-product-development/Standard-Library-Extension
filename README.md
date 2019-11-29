@@ -5,14 +5,15 @@
 * logging_wrappers.py
 
 	Returns configured logger and log message dictionary.  
-	The original log messages must be saved as 'messages.json'.  
-	If you pass the True to third argument, logger will not save log to file.
+	getLogger: If you pass a Path object to second argument, logger will save log to file.  
+	GetLogMessages: The original log messages must be saved as 'messages.json'.  
 	```python
 	import pathlib
 	from fmodules.logging_wrappers import loggingWrappers
 
 	me = pathlib.Path(__file__)
-	logger, msg = loggingWrappers.GetLoggingKit(me.stem, me.parent)
+	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
+	msg = loggingWrappers.GetLogMessages(me)
 	logger.info('log!')
 	logger.debug(msg['test'])
 	```

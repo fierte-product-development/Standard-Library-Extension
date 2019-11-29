@@ -53,17 +53,15 @@ class loggingWrappers:
         return logger, log_file if output_dir else None
 
     @staticmethod
-    def GetLogMessages(name, saved_dir: pathlib.Path) -> dict:
-        with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-            msg = json.loads(json_.read())
-        return msg[name]
-
-    @classmethod
-    def GetLoggingKit(cls, logger_name, root_dir: pathlib.Path, debug=False) -> Tuple[Logger, dict]:
+    def GetLogMessages(file_: pathlib.Path) -> dict:
         """
         Return logger and log message dictionary.
         Log message dictionary must be saved as 'messages.json'.
+
+        Args:
+            file_ (pathlib.Path): `pathlib.Path(__file__)`
         """
-        logger, _ = cls.getLogger(logger_name, root_dir if not debug else None)
-        log_messages = cls.GetLogMessages(logger_name, root_dir)
-        return logger, log_messages
+        name, saved_dir = file_.stem, file_.parent
+        with open(saved_dir/'messages.json', encoding='utf-8') as json_:
+            msg = json.loads(json_.read())
+        return msg[name]
