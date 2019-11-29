@@ -1,5 +1,5 @@
 # Install
-`pip install git+https://github.com/fierte-product-development/Modules`
+`pip install git+https://github.com/fierte-product-development/StandardLibraryExtension`
 
 # Modules
 * logging_wrappers.py
