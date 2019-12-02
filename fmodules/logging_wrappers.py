@@ -74,13 +74,13 @@ class loggingTools:
     @staticmethod
     def SetMethodLogMessages(cls_):
         cls_messages = cls_.logmsg
-        for name, method in inspect.getmembers(cls_, inspect.ismethod):
+        for name, method in inspect.getmembers(cls_, inspect.isfunction):
             if name in cls_messages:
                 method.logmsg = AttrDict(cls_messages[name])
 
     @staticmethod
     def GetMethodLogMessages(cls_):
         method_name = inspect.stack()[1].function
-        for name, func in inspect.getmembers(cls_, inspect.ismethod):
+        for name, func in inspect.getmembers(cls_, inspect.isfunction):
             if name == method_name:
                 return func.logmsg
