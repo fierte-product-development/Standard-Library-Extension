@@ -1,10 +1,13 @@
 from logging import Logger, getLogger, Filter, Formatter, Handler, StreamHandler, FileHandler, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
+import inspect
 from typing import Tuple, Optional
 import pathlib
 import sys
 import json
 
 import fmodules.pathlib_extensions  # noqa
+from attrdict import AttrDict
+
 
 class loggingWrappers:
     _formatter = Formatter('%(levelname)8s %(asctime)s [%(name)s] %(message)s%(ex_func)s')
@@ -52,6 +55,8 @@ class loggingWrappers:
             }))
         return logger, log_file if output_dir else None
 
+
+class loggingTools:
     @staticmethod
     def GetLogMessages(file_: pathlib.Path) -> dict:
         """
@@ -65,3 +70,17 @@ class loggingWrappers:
         with open(saved_dir/'messages.json', encoding='utf-8') as json_:
             msg = json.loads(json_.read())
         return msg[name]
+
+    @staticmethod
+    def SetMethodLogMessages(cls_):
+        cls_messages = cls_.logmsg
+        for name, method in inspect.getmembers(cls_, inspect.ismethod):
+            if name in cls_messages:
+                method.logmsg = AttrDict(cls_messages[name])
+
+    @staticmethod
+    def GetMethodLogMessages(cls_):
+        method_name = inspect.stack()[1].function
+        for name, func in inspect.getmembers(cls_, inspect.ismethod):
+            if name == method_name:
+                return func.logmsg

@@ -9,20 +9,18 @@
 	GetLogMessages: The original log messages must be saved as 'messages.json'.  
 	```python
 	import pathlib
-	from fmodules.logging_wrappers import loggingWrappers
+	from fmodules.logging_wrappers import loggingWrappers, loggingTools
 
 	me = pathlib.Path(__file__)
 	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
-	msg = loggingWrappers.GetLogMessages(me)
+	msg = loggingTools.GetLogMessages(me)
 	logger.info('log!')
 	logger.debug(msg['test'])
 	```
 
-	You can also get logger and log messages, using their respective functions.
-
 * subprocess_wrappers.py
 
-	Returned CompletedProcess object has encoded stdout and stderr attributes.
+	Returned CompletedProcess object has encoded stdout and stderr attributes.  
 	```python
 	from fmodules.subprocess_wrappers import subprocessWrappers
 
@@ -32,7 +30,7 @@
 
 * pathlib_extensions.py
 
-	Makes hidden directory on Windows/Linux.
+	Makes hidden directory on Windows/Linux.  
 	```python
 	import pathlib
 	import fmodules.pathlib_extensions  # noqa
