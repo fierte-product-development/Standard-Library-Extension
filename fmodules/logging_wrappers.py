@@ -6,7 +6,7 @@ import sys
 import json
 
 import fmodules.pathlib_extensions  # noqa
-from attrdict import AttrDict
+from fmodules.dict_wrapper import AttrDict
 
 
 class loggingWrappers:
@@ -68,7 +68,7 @@ class loggingTools:
         """
         name, saved_dir = file_.stem, file_.parent
         with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-            msg = json.loads(json_.read())
+            msg = AttrDict(json.loads(json_.read()))
         return msg[name]
 
     @staticmethod
@@ -76,7 +76,7 @@ class loggingTools:
         cls_messages = cls_.logmsg
         for name, method in inspect.getmembers(cls_, inspect.isfunction):
             if name in cls_messages:
-                method.logmsg = AttrDict(cls_messages[name])
+                method.logmsg = cls_messages[name]
 
     @staticmethod
     def GetMethodLogMessages(cls_):
