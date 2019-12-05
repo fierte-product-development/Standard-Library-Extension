@@ -5,7 +5,7 @@ import locale
 
 class subprocessWrappers:
     @staticmethod
-    def run(*args, **kwargs):
+    def common_setting(*args, **kwargs):
         param = {
             'args': args,
             'stdout': subprocess.PIPE,
@@ -16,5 +16,16 @@ class subprocessWrappers:
         if os.name == 'nt' and 'shell' not in kwargs:
             param['encoding'] = 'utf-8'
         kwargs.update(param)
-        cp = subprocess.run(**kwargs)
+        return kwargs
+
+    @classmethod
+    def run(cls, *args, **kwargs):
+        param = cls.common_setting(*args, **kwargs)
+        cp = subprocess.run(**param)
         return cp
+
+    @classmethod
+    def Popen(cls, *args, **kwargs):
+        param = cls.common_setting(*args, **kwargs)
+        popen = subprocess.Popen(**param)
+        return popen
