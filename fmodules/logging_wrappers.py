@@ -2,6 +2,7 @@ from logging import Logger, getLogger, Filter, Formatter, Handler, StreamHandler
 import inspect
 from typing import Tuple, Optional
 import pathlib
+from pathlib import Path
 import sys
 import json
 
@@ -34,7 +35,7 @@ class loggingWrappers:
         return handler
 
     @classmethod
-    def getLogger(cls, name, output_dir: Optional[pathlib.Path] = None) -> Tuple[Logger, Optional[pathlib.Path]]:
+    def getLogger(cls, name, output_dir: Optional[Path] = None) -> Tuple[Logger, Optional[Path]]:
         logger = getLogger(name)
         logger.setLevel(INFO if output_dir else DEBUG)
         logger.addHandler(cls._NewHandler(StreamHandler, **{
@@ -57,8 +58,16 @@ class loggingWrappers:
 
 
 class loggingTools:
+    @classmethod
+    def logmsg(cls, cls_):
+        """Class decorator.
+        """
+        cls_.logmsg = cls.GetLogMessages(inspect.stack()[1].filename)[Path(cls_.__name__)]
+        cls.SetMethodLogMessages(cls_)
+        return cls_
+
     @staticmethod
-    def GetLogMessages(file_: pathlib.Path) -> dict:
+    def GetLogMessages(file_: Path) -> dict:
         """
         Return logger and log message dictionary.
         Log message dictionary must be saved as 'messages.json'.
