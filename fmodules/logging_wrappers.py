@@ -62,7 +62,7 @@ class loggingTools:
     def logmsg(cls, cls_):
         """Class decorator.
         """
-        cls_.logmsg = cls.GetLogMessages(inspect.stack()[1].filename)[Path(cls_.__name__)]
+        cls_.logmsg = cls.GetLogMessages(Path(inspect.stack()[1].filename))[cls_.__name__]
         cls.SetMethodLogMessages(cls_)
         return cls_
 
