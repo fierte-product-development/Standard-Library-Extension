@@ -57,39 +57,29 @@ class loggingWrappers:
         return logger, log_file if output_dir else None
 
 
-class loggingTools:
-    @classmethod
-    def logmsg(cls, cls_):
-        """Class decorator.
-        """
-        cls_.logmsg = cls.GetLogMessages(Path(inspect.stack()[1].filename))[cls_.__name__]
-        cls.SetMethodLogMessages(cls_)
-        return cls_
+def GetLogMessages(file_: Path) -> AttrDict:
+    """
+    Return logger and log message dictionary.
+    Log message dictionary must be saved as 'messages.json'.
 
-    @staticmethod
-    def GetLogMessages(file_: Path) -> dict:
-        """
-        Return logger and log message dictionary.
-        Log message dictionary must be saved as 'messages.json'.
+    Args:
+        file_ (pathlib.Path): `pathlib.Path(__file__)`
+    """
+    name, saved_dir = file_.stem, file_.parent
+    with open(saved_dir/'messages.json', encoding='utf-8') as json_:
+        msg = AttrDict(json.loads(json_.read()))
+    return msg[name]
 
-        Args:
-            file_ (pathlib.Path): `pathlib.Path(__file__)`
-        """
-        name, saved_dir = file_.stem, file_.parent
-        with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-            msg = AttrDict(json.loads(json_.read()))
-        return msg[name]
 
-    @staticmethod
-    def SetMethodLogMessages(cls_):
-        cls_messages = cls_.logmsg
-        for name, method in inspect.getmembers(cls_, inspect.isfunction):
-            if name in cls_messages:
-                method.logmsg = cls_messages[name]
-
-    @staticmethod
-    def GetMethodLogMessages(cls_):
-        method_name = inspect.stack()[1].function
-        for name, func in inspect.getmembers(cls_, inspect.isfunction):
-            if name == method_name:
-                return func.logmsg
+def logmsg(method=True) -> AttrDict:
+    """
+    Returns:
+        AttrDict: {caller module}.globals()[{caller class}]['log_msgs'][{caller function}]
+    """
+    caller = inspect.currentframe().f_back
+    func_name = inspect.getframeinfo(caller).function
+    log_msgs = caller.f_globals['log_msgs']
+    if method:
+        cls_name = list(caller.f_locals.values())[0].__class__.__name__
+        log_msgs = log_msgs[cls_name]
+    return log_msgs[func_name]

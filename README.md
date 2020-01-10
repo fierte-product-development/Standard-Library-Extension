@@ -9,12 +9,12 @@
 	GetLogMessages: The original log messages must be saved as 'messages.json'.  
 	```python
 	import pathlib
-	from fmodules.logging_wrappers import loggingWrappers, loggingTools
+	from fmodules.logging_wrappers import loggingWrappers, GetLogMessages
 
 	me = pathlib.Path(__file__)
 	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
-	msg = loggingTools.GetLogMessages(me)
 	logger.info('log!')
+	msg = GetLogMessages(me)
 	logger.debug(msg['test'])
 	```
 
