@@ -1,7 +1,6 @@
-from logging import Logger, getLogger, Filter, Formatter, Handler, StreamHandler, FileHandler, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
+from logging import Logger, getLogger, Formatter, Handler, StreamHandler, FileHandler, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 import inspect
 from typing import Tuple, Optional
-import pathlib
 from pathlib import Path
 import sys
 import json
