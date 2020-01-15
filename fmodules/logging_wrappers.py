@@ -79,6 +79,12 @@ def logmsg(method=True) -> AttrDict:
     func_name = inspect.getframeinfo(caller).function
     log_msgs = caller.f_globals['log_msgs']
     if method:
-        cls_name = list(caller.f_locals.values())[0].__class__.__name__
+        for key, val in caller.f_locals.items():
+            if key == 'self':
+                cls_name = val.__class__.__name__
+                break
+            elif key == 'cls':
+                cls_name = val.__name__
+                break
         log_msgs = log_msgs[cls_name]
     return log_msgs[func_name]
