@@ -4,18 +4,25 @@
 # Modules
 * logging_wrappers.py
 
-	Returns configured logger and log message dictionary.  
-	getLogger: If you pass a Path object to second argument, logger will save log to file.  
-	GetLogMessages: The original log messages must be saved as 'messages.json'.  
+	loggingWrappers.getLogger: Returns configured logger.  
+	SetLogMessages: Sets log message metadata to an object  
+	logmsg: Gets an object's log message metadata  
 	```python
-	import pathlib
+	from pathlib import Path
 	from fmodules.logging_wrappers import loggingWrappers, GetLogMessages
 
-	me = pathlib.Path(__file__)
+	me = Path(__file__)
 	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
 	logger.info('log!')
-	msg = GetLogMessages(me)
-	logger.debug(msg['test'])
+
+	class Foo:
+		def foo(self):
+			logger.info(logmsg().test)
+
+	def bar():
+		logger.info(logmsg().test)
+
+	SetLogMessages()
 	```
 
 * subprocess_wrappers.py

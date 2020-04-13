@@ -1,5 +1,5 @@
 from logging import Logger, getLogger, Formatter, Handler, StreamHandler, FileHandler, NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
-import inspect
+from inspect import currentframe, getframeinfo, getargvalues, isfunction, isclass
 from typing import Tuple, Optional
 from pathlib import Path
 import sys
@@ -56,35 +56,38 @@ class loggingWrappers:
         return logger, log_file if output_dir else None
 
 
-def GetLogMessages(file_: Path) -> AttrDict:
+def SetLogMessages() -> None:
     """
-    Return logger and log message dictionary.
-    Log message dictionary must be saved as 'messages.json'.
-
-    Args:
-        file_ (pathlib.Path): `pathlib.Path(__file__)`
+    Set `_log_msg` attribute of each object to the message contained in 'messages.json'.
+    'messages.json' must be in the same directory as the caller's `.py` file.
     """
-    name, saved_dir = file_.stem, file_.parent
-    with open(saved_dir/'messages.json', encoding='utf-8') as json_:
-        msg = AttrDict(json.loads(json_.read()))
-    return msg[name]
+    caller = currentframe().f_back
+    caller_path = Path(getframeinfo(caller).filename)
+    caller_name, caller_dir = caller_path.stem, caller_path.parent
+    with open(caller_dir / 'messages.json', encoding='utf-8') as json_:
+        msg = AttrDict(json.loads(json_.read()))[caller_name]
+    for name, obj in caller.f_locals.items():
+        if (isfunction(obj) or isclass(obj)) and name in msg:
+            obj._log_msg = msg[name]
 
 
-def logmsg(method=True) -> AttrDict:
+def logmsg() -> AttrDict:
     """
     Returns:
-        AttrDict: {caller module}.globals()[{caller class}]['log_msgs'][{caller function}]
+        AttrDict: One of the following
+            {caller module}.globals()[{caller class}]._log_msg[{caller function}]
+            {caller module}.globals()[{caller function}]._log_msg
     """
-    caller = inspect.currentframe().f_back
-    func_name = inspect.getframeinfo(caller).function
-    log_msgs = caller.f_globals['log_msgs']
-    if method:
-        for key, val in caller.f_locals.items():
-            if key == 'self':
-                cls_name = val.__class__.__name__
-                break
-            elif key == 'cls':
-                cls_name = val.__name__
-                break
-        log_msgs = log_msgs[cls_name]
-    return log_msgs[func_name]
+    caller = currentframe().f_back
+    func_name = getframeinfo(caller).function
+    args = getargvalues(caller)
+    first_arg = args.args[0] if args.args else None
+    if first_arg == 'self':
+        # instance method
+        return args.locals['self'].__class__._log_msg[func_name]
+    elif first_arg == 'cls':
+        # class method
+        return args.locals['cls']._log_msg[func_name]
+    else:
+        return caller.f_globals[func_name]._log_msg
+
