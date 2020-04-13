@@ -5,8 +5,8 @@
 * logging_wrappers.py
 
 	loggingWrappers.getLogger: Returns configured logger.  
-	SetLogMessages: Sets log message metadata to an object  
-	logmsg: Gets an object's log message metadata  
+	SetLogMessages: Sets log message to object's metadata.  
+	logmsg: Gets log message from object's metadata.  
 	```python
 	from pathlib import Path
 	from fmodules.logging_wrappers import loggingWrappers, GetLogMessages
