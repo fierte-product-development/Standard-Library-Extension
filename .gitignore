@@ -1,2 +1,4 @@
-**/*.pyc
 !.gitkeep
+.venv/*
+.vscode/*
+**/*.pyc
