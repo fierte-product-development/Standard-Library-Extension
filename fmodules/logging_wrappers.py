@@ -64,11 +64,15 @@ def SetLogMessages() -> None:
     caller = currentframe().f_back
     caller_path = Path(getframeinfo(caller).filename)
     caller_name, caller_dir = caller_path.stem, caller_path.parent
-    with open(caller_dir / 'messages.json', encoding='utf-8') as json_:
-        msg = AttrDict(json.loads(json_.read()))[caller_name]
+    msgs = (caller_dir / 'messages.json').read_text('utf-8')
+    msg = json.loads(msgs)[caller_name]
     for name, obj in caller.f_locals.items():
         if (isfunction(obj) or isclass(obj)) and name in msg:
-            obj._log_msg = msg[name]
+            if hasattr(obj, '_log_msg'):
+                obj._log_msg = AttrDict(obj._log_msg)
+                obj._log_msg.update(msg[name])
+            else:
+                obj._log_msg = AttrDict(msg[name])
 
 
 def logmsg() -> AttrDict:
@@ -82,12 +86,6 @@ def logmsg() -> AttrDict:
     func_name = getframeinfo(caller).function
     args = getargvalues(caller)
     first_arg = args.args[0] if args.args else None
-    if first_arg == 'self':
-        # instance method
-        return args.locals['self'].__class__._log_msg[func_name]
-    elif first_arg == 'cls':
-        # class method
-        return args.locals['cls']._log_msg[func_name]
-    else:
-        return caller.f_globals[func_name]._log_msg
-
+    if first_arg in ['self', 'cls']:
+        return args.locals[first_arg]._log_msg[func_name]
+    return caller.f_globals[func_name]._log_msg
