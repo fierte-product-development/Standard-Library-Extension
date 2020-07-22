@@ -65,14 +65,14 @@ def SetLogMessages() -> None:
     caller_path = Path(getframeinfo(caller).filename)
     caller_name, caller_dir = caller_path.stem, caller_path.parent
     msgs = (caller_dir / 'messages.json').read_text('utf-8')
-    msg = json.loads(msgs)[caller_name]
+    msg = AttrDict(json.loads(msgs)[caller_name])
     for name, obj in caller.f_locals.items():
         if (isfunction(obj) or isclass(obj)) and name in msg:
             if hasattr(obj, '_log_msg'):
                 obj._log_msg = AttrDict(obj._log_msg)
                 obj._log_msg.update(msg[name])
             else:
-                obj._log_msg = AttrDict(msg[name])
+                obj._log_msg = msg[name]
 
 
 def logmsg() -> AttrDict:
