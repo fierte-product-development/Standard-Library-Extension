@@ -27,7 +27,7 @@
         "fmodules": {
             "editable": true,
             "git": "https://github.com/fierte-product-development/Standard-Library-Extension",
-            "ref": "ee7e7e1aa70fb9b00ca46e16ceeea5301652a0f9"
+            "ref": "169b6615c84b8588fd9a322b590959b95f2e572a"
         },
         "mccabe": {
             "hashes": [
