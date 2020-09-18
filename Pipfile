@@ -4,11 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = {editable = true,git = "https://github.com/psf/black.git"}
+flake8 = "*"
+pytest = "*"
+pytest-mock = "*"
 
 [packages]
-pep8 = "*"
-fmodules = {editable = true,git = "https://github.com/fierte-product-development/Standard-Library-Extension"}
-flake8 = "*"
 
 [requires]
 python_version = "3.8"

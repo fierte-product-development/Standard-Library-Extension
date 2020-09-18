@@ -1,4 +1,5 @@
 !.gitkeep
 .venv/*
 .vscode/*
+pyrightconfig.json
 **/*.pyc
