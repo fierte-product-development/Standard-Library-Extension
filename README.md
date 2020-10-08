@@ -27,7 +27,8 @@
 
 * subprocess_wrappers.py
 
-	Returned CompletedProcess object has encoded stdout and stderr attributes.  
+	This is a wrapper of subprocess.run and Popen.  
+	This wrapper executes run and Popen with appropriate encoding on Windows/Linux and capture settings.  
 	```python
 	from fmodules.subprocess_wrappers import subprocessWrappers
 
