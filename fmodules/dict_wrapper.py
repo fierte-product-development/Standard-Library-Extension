@@ -1,4 +1,6 @@
 class AttrDict(dict):
+    """This is a dict allow their elements to be accessed both as keys and as attributes."""
+
     def __init__(self, *args, **kwargs):
         def SearchDictAndReplace(node):
             if type(node) is dict:
