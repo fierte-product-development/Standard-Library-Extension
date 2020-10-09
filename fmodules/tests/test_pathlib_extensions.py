@@ -4,7 +4,7 @@ import tempfile
 import shutil
 
 from ..subprocess_wrappers import subprocessWrappers
-from .. pathlib_extensions  # noqa
+from .. import pathlib_extensions  # noqa
 
 
 class mkdir_hidden(unittest.TestCase):
