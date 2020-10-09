@@ -27,8 +27,8 @@
 
 * subprocess_wrappers.py
 
-	subprocessWrappers is a wrapper of subprocess.run and Popen.  
-	This wrapper executes run and Popen with appropriate encoding on Windows/Linux and capture settings.  
+	subprocessWrappers is a wrapper of `run` and `Popen`.  
+	This wrapper executes `run` and `Popen` with appropriate encoding on Windows/Linux and capture settings.  
 	```python
 	from fmodules.subprocess_wrappers import subprocessWrappers
 
@@ -48,11 +48,25 @@
 
 * dict_wrappers.py
 
-	AttrDict is a dict allow their elements to be accessed both as keys and as attributes.  
+	`AttrDict` is a `dict` allow their elements to be accessed both as keys and as attributes.  
 	```python
 	from fmodules.dict_wrappers import AttrDict
 
 	attr_dict = AttrDict({'foo': 'bar'})
 	print(attr_dict['foo'])
 	print(attr_dict.foo)
+	```
+
+* dataclasses_wrappers.py
+
+	Automatically determines whether to use `defalut` or `default_factory` as the argument to the `field` function.  
+	`Default` passes init in Ture, `Initial` passes init in False.  
+	```python
+	from dataclasses import dataclass
+	from fmodules.dataclasses_wrappers import Default, Initial
+
+	@dataclass
+	class Foo:
+		foo: int = Default(0)
+		bar: list[str] = Initial([])
 	```
