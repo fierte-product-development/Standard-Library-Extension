@@ -16,11 +16,11 @@
 	logger.info('log!')
 
 	class Foo:
-		def foo(self):
-			logger.info(logmsg().test)
+	    def foo(self):
+	        logger.info(logmsg().test)
 
 	def bar():
-		logger.info(logmsg().test)
+	    logger.info(logmsg().test)
 
 	SetLogMessages()
 	```
@@ -67,6 +67,6 @@
 
 	@dataclass
 	class Foo:
-		foo: int = Default(0)
-		bar: list[str] = Initial([])
+	    foo: int = Default(0)
+	    bar: list[str] = Initial([])
 	```
