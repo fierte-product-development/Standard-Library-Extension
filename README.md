@@ -38,7 +38,7 @@
 
 * pathlib_extensions.py
 
-	Makes hidden directory on Windows/Linux.  
+	`mkdir_hidden` makes hidden directory on Windows/Linux.  
 	```python
 	import pathlib
 	import fmodules.pathlib_extensions  # noqa
