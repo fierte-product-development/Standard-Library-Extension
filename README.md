@@ -4,7 +4,7 @@
 # Modules
 * logging_wrappers.py
 
-	`loggingWrappers.getLogger`: Returns configured logger.  
+	`loggingWrappers.getLogger`: Returns configured `Logger`.  
 	`SetLogMessages`: Sets log message to object's metadata.  
 	`logmsg`: Gets log message from object's metadata.  
 	```python
