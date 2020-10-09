@@ -13,7 +13,7 @@
 
 	me = Path(__file__)
 	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
-	logger.info('log!')
+	logger.info("log!")
 
 	class Foo:
 	    def foo(self):
@@ -32,7 +32,7 @@
 	```python
 	from fmodules.subprocess_wrappers import subprocessWrappers
 
-	cp = subprocessWrappers.run('attrib', __file__, shell=True)
+	cp = subprocessWrappers.run("attrib", __file__, shell=True)
 	print(cp.stdout)
 	```
 
@@ -43,7 +43,7 @@
 	import pathlib
 	import fmodules.pathlib_extensions  # noqa
 
-	hidden_folder = (pathlib.Path(__file__).parent/'hidden_folder').mkdir_hidden()
+	hidden_folder = (pathlib.Path(__file__).parent / "hidden_folder").mkdir_hidden()
 	```
 
 * dict_wrappers.py
@@ -52,8 +52,8 @@
 	```python
 	from fmodules.dict_wrappers import AttrDict
 
-	attr_dict = AttrDict({'foo': 'bar'})
-	print(attr_dict['foo'])
+	attr_dict = AttrDict({"foo": "bar"})
+	print(attr_dict["foo"])
 	print(attr_dict.foo)
 	```
 
