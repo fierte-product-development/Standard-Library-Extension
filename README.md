@@ -4,12 +4,12 @@
 # Modules
 * logging_wrappers.py
 
-	loggingWrappers.getLogger: Returns configured logger.  
-	SetLogMessages: Sets log message to object's metadata.  
-	logmsg: Gets log message from object's metadata.  
+	`loggingWrappers.getLogger`: Returns configured logger.  
+	`SetLogMessages`: Sets log message to object's metadata.  
+	`logmsg`: Gets log message from object's metadata.  
 	```python
 	from pathlib import Path
-	from fmodules.logging_wrappers import loggingWrappers, GetLogMessages
+	from fmodules.logging_wrappers import loggingWrappers, SetLogMessages, logmsg
 
 	me = Path(__file__)
 	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
