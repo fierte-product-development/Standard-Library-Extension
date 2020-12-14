@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class AttrDict(dict):
     """This is a dict allow their elements to be accessed both as keys and as attributes."""
 
@@ -14,3 +17,6 @@ class AttrDict(dict):
         for key, val in self.items():
             self[key] = SearchDictAndReplace(val)
         self.__dict__ = self
+
+    def __getattr__(self, name) -> Any:
+        raise AttributeError
