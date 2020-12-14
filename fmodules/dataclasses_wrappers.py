@@ -1,18 +1,22 @@
+from typing import Any
 from dataclasses import field
-from numbers import Number
 
 
-def Default(value):
+def Default(value) -> Any:
     return field(**_MakeFieldArg(value), init=True)
 
 
-def Initial(value):
+class noninit:
+    pass
+
+
+def Initial(value=noninit) -> Any:
     return field(**_MakeFieldArg(value), init=False)
 
 
-def _MakeFieldArg(value):
-    return (
-        {"default": value}
-        if isinstance(value, Number) or (type_ := type(value)) in (str, bytes, type(None), tuple)
-        else {"default_factory": type_}
-    )
+def _MakeFieldArg(value) -> dict:
+    if value is noninit:
+        return {}
+    if isinstance(value, type):
+        return {"default_factory": value}
+    return {"default": value}
