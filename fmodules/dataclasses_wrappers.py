@@ -1,21 +1,34 @@
-from typing import Any
+from typing import TypeVar, Union, Any, overload
 from dataclasses import field
 
 
-def Default(value) -> Any:
+T = TypeVar("T")
+
+
+def Default(value: Union[T, type[T]]) -> T:
     return field(**_MakeFieldArg(value), init=True)
 
 
-class noninit:
+class nil:
     pass
 
 
-def Initial(value=noninit) -> Any:
+@overload
+def Initial() -> Any:
+    ...
+
+
+@overload
+def Initial(value: Union[T, type[T]]) -> T:
+    ...
+
+
+def Initial(value=nil):
     return field(**_MakeFieldArg(value), init=False)
 
 
 def _MakeFieldArg(value) -> dict:
-    if value is noninit:
+    if value is nil:
         return {}
     if isinstance(value, type):
         return {"default_factory": value}

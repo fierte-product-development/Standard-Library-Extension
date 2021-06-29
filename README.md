@@ -67,6 +67,7 @@
 
 	@dataclass
 	class Foo:
-	    foo: int = Default(0)
-	    bar: list[str] = Initial([])
+	    foo: int = Default(0)  # If you pass T, use default
+	    bar: list[str] = Initial(list)  # Pass type[T], use default_factory
+		baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
 	```
