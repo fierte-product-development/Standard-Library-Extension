@@ -54,7 +54,9 @@
 
 	attr_dict = AttrDict({"foo": "bar"})
 	print(attr_dict["foo"])
+	>>> bar
 	print(attr_dict.foo)
+	>>> bar
 	```
 
 * dataclasses_wrappers.py
