@@ -11,7 +11,9 @@ from .dict_wrapper import AttrDict
 
 
 HandlerT = TypeVar("HandlerT", bound=Handler)
-_loggers: dict[str, Logger] = {}
+_parent: Optional[Logger] = None
+_parent_cache: dict[str, Logger] = {}
+_children: dict[str, Logger] = {}
 
 
 def _AddExtraMsg(record: LogRecord) -> Literal[True]:
@@ -39,28 +41,33 @@ def _Setting(logger: Logger, output_dir: Optional[Path]) -> None:
         logger.addHandler(_MakeHandler(FileHandler, filename=log_file, encoding="utf-8"))
 
 
-def _Copy(src: Logger, dst: Logger) -> None:
-    dst.setLevel(src.level)
-    for hndl in dst.handlers:
-        dst.removeHandler(hndl)
-    for hndl in src.handlers:
-        dst.addHandler(hndl)
+def _SetParent(child: Logger, parent: Logger) -> None:
+    child.name = ".".join([parent.name, child.name.split(".")[-1]])
+    child.setLevel(parent.level)
+    for hndl in list(child.handlers):
+        child.removeHandler(hndl)
+    for hndl in parent.handlers:
+        child.addHandler(hndl)
 
 
 def getLogger(name: str, output_dir: Optional[Path] = None, *, root: bool = False) -> Logger:
-    if existing := _loggers.get(name):
-        return existing
-    logger = gL(name)
+    global _parent, _parent_cache, _children
     if not root:
-        _loggers[name] = logger
-        _Copy(_loggers["root"], logger) if "root" in _loggers else _Setting(logger, output_dir)
-        return logger
-    _Setting(logger, output_dir)
-    for existing in _loggers.values():
-        _Copy(logger, existing)
-    _loggers[name] = logger
-    _loggers["root"] = logger
-    return logger
+        if child := _children.get(name):
+            return child
+        child = gL(name)
+        _SetParent(child, _parent) if _parent else _Setting(child, output_dir)
+        _children[name] = child
+        return child
+    if _parent and _parent.name not in _parent_cache:
+        _parent_cache[_parent.name] = _parent
+    if not (parent := _parent_cache.get(name)):
+        parent = gL(name)
+        _Setting(parent, output_dir)
+    for child in _children.values():
+        _SetParent(child, parent)
+    _parent = parent
+    return parent
 
 
 def SetLogMessages() -> None:
