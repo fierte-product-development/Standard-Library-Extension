@@ -1,4 +1,4 @@
-name: AutoTest
+name: Test
 
 on:
   push:
