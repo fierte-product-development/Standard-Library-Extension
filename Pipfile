@@ -8,6 +8,7 @@ black = {editable = true,git = "https://github.com/psf/black.git"}
 flake8 = "*"
 pytest = "*"
 pytest-mock = "*"
+pytest-order = "*"
 
 [packages]
 

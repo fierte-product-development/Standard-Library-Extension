@@ -21,6 +21,6 @@ jobs:
         pip install pipenv
         pipenv sync
     - name: Install pytest
-      run: pipenv install pytest pytest-mock pytest-timeout
+      run: pipenv install pytest pytest-mock pytest-order
     - name: Test with pytest
       run: pipenv run pytest -v
