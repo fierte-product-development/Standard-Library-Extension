@@ -21,7 +21,7 @@ from fmodules.logging_wrappers import getLogger
 logger = getLogger()
 
 def log_info(msg: str):
-	logger.info(msg)
+    logger.info(msg)
 ```
 
 ```py
@@ -32,7 +32,7 @@ import A
 logger = getLogger(root=True)
 
 def log_debug(msg: str):
-	logger.debug(msg)
+    logger.debug(msg)
 
 log_debug("foo")
 >>>   DEBUG 2021-07-01 20:51:36 [B] foo (8:log_debug)
@@ -81,9 +81,9 @@ from fmodules.dataclasses_wrappers import Default, Initial
 
 @dataclass
 class Foo:
-	foo: int = Default(0)  # If you pass T, use default
-	bar: list[str] = Initial(list)  # Pass type[T], use default_factory
-	baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
+    foo: int = Default(0)  # If you pass T, use default
+    bar: list[str] = Initial(list)  # Pass type[T], use default_factory
+    baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
 ```
 
 ## inspect_wrappers
@@ -92,10 +92,10 @@ class Foo:
 from fmodules.inspect_wrappers import previousframe
 
 def foo() -> str:
-	return previousframe(2).function
+    return previousframe(2).function
 
 def bar() -> str:
-	return foo()
+    return foo()
 
 bar()
 >>> bar
