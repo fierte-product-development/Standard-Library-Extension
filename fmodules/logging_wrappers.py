@@ -79,13 +79,12 @@ def SetLogMessages() -> None:
     Set `_log_msg` attribute of each object to the message contained in 'messages.json'.
     'messages.json' must be in the same directory as the caller's `.py` file.
     """
-    if (caller := currentframe().f_back) is None:
-        raise RuntimeError
-    caller_path = Path(getframeinfo(caller).filename)
+    caller = previousframe(2)
+    caller_path = Path(caller.filename)
     caller_name, caller_dir = caller_path.stem, caller_path.parent
     msgs = (caller_dir / "messages.json").read_text("utf-8")
     msg = AttrDict(json.loads(msgs)[caller_name])
-    for name, obj in caller.f_locals.items():
+    for name, obj in caller.frame.f_locals.items():
         if (isfunction(obj) or isclass(obj)) and name in msg:
             if hasattr(obj, "_log_msg"):
                 obj._log_msg = AttrDict(obj._log_msg)
@@ -101,12 +100,11 @@ def logmsg() -> AttrDict:
             {caller module}.globals()[{caller class}]._log_msg[{caller function}]
             {caller module}.globals()[{caller function}]._log_msg
     """
-    if (caller := currentframe().f_back) is None:
-        raise RuntimeError
-    func_name = getframeinfo(caller).function
-    args = getargvalues(caller)
+    caller = previousframe(2)
+    func_name = caller.function
+    args = getargvalues(caller.frame)
     return (
         args.locals[first_arg]._log_msg[func_name]
         if args.args and (first_arg := args.args[0]) in ["self", "cls"]
-        else caller.f_globals[func_name]._log_msg
+        else caller.frame.f_globals[func_name]._log_msg
     )
