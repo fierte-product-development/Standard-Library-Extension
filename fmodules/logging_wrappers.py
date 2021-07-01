@@ -63,10 +63,15 @@ def getLogger(name: str, output_dir: Optional[Path] = None, *, root: bool = Fals
     if not (parent := _parent_cache.get(name)):
         parent = gL(name)
         _Setting(parent, output_dir)
-    for child in _children.values():
-        _SetParent(child, parent)
     _parent = parent
+    propagate()
     return parent
+
+
+def propagate() -> None:
+    if _parent:
+        for child in _children.values():
+            _SetParent(child, _parent)
 
 
 def SetLogMessages() -> None:
