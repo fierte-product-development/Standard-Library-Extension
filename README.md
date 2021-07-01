@@ -9,32 +9,43 @@
 # Modules
 * logging_wrappers.py
 
-	`loggingWrappers.getLogger`: Returns configured `Logger`.  
-	`SetLogMessages`: Sets log message to object's metadata.  
-	`logmsg`: Gets log message from object's metadata.  
-	```python
-	from pathlib import Path
-	from fmodules.logging_wrappers import loggingWrappers, SetLogMessages, logmsg
+	`getLogger` will always return a logger with the same name(*\_\_package__*).  
+	These loggers change their behavior depending on the three arguments that passed to `getLogger` **last**.  
 
-	me = Path(__file__)
-	logger, _ = loggingWrappers.getLogger(__name__, me.parent)
-	logger.info("log!")
+	- `output_dir` (Path, optional): Logger will Output a .log file to the specified path. Defaults to None.
+	- `root` (bool, optional): The name of module that called `getLogger` last is added to log messages. Defaults to False.
+	- `name` (str, optional): You can directly specify the name to be added to log messages. Defaults to "".
+	```py
+	# module A
+	from fmodules.logging_wrappers import getLogger
 
-	class Foo:
-	    def foo(self):
-	        logger.info(logmsg().test)
+	logger = getLogger()
 
-	def bar():
-	    logger.info(logmsg().test)
+	def log_info(msg: str):
+	    logger.info(msg)
+	```
 
-	SetLogMessages()
+	```py
+	# module B
+	from fmodules.logging_wrappers import getLogger
+	import A
+
+	logger = getLogger(root=True)
+
+	def log_debug(msg: str):
+	    logger.debug(msg)
+
+	log_debug("foo")
+	>>>   DEBUG 2021-07-01 20:51:36 [B] foo (8:log_debug)
+	A.log_info("bar")
+	>>>    INFO 2021-07-01 20:51:37 [B.A] bar
 	```
 
 * subprocess_wrappers.py
 
 	subprocessWrappers is a wrapper of `run` and `Popen`.  
 	This wrapper executes `run` and `Popen` with appropriate encoding on Windows/Linux and capture settings.  
-	```python
+	```py
 	from fmodules.subprocess_wrappers import subprocessWrappers
 
 	cp = subprocessWrappers.run("attrib", __file__, shell=True)
@@ -44,18 +55,19 @@
 * pathlib_extensions.py
 
 	`mkdir_hidden` makes hidden directory on Windows/Linux.  
-	```python
-	import pathlib
+	```py
+	from pathlib import Path
 	import fmodules.pathlib_extensions  # noqa
 
-	hidden_folder = (pathlib.Path(__file__).parent / "hidden_folder").mkdir_hidden()
+	path = Path(__file__).parent / "hidden_folder"
+	path.mkdir_hidden()
 	```
 
-* dict_wrappers.py
+* dict_wrapper.py
 
 	`AttrDict` is a `dict` allow their elements to be accessed both as keys and as attributes.  
-	```python
-	from fmodules.dict_wrappers import AttrDict
+	```py
+	from fmodules.dict_wrapper import AttrDict
 
 	attr_dict = AttrDict({"foo": "bar"})
 	print(attr_dict["foo"])
@@ -68,7 +80,7 @@
 
 	Automatically determines whether to use `defalut` or `default_factory` as the argument to the `field` function.  
 	`Default` passes init in Ture, `Initial` passes init in False.  
-	```python
+	```py
 	from dataclasses import dataclass
 	from fmodules.dataclasses_wrappers import Default, Initial
 
@@ -76,5 +88,21 @@
 	class Foo:
 	    foo: int = Default(0)  # If you pass T, use default
 	    bar: list[str] = Initial(list)  # Pass type[T], use default_factory
-		baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
+	    baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
+	```
+
+* inspect_wrappers.py
+
+	`previousframe` returns the frame back from `currentframe()` specified by `back` of times."""
+	```py
+	from fmodules.inspect_wrappers import previousframe
+
+	def foo() -> str:
+	    return previousframe(2).function
+
+	def bar() -> str:
+	    return foo()
+
+	bar()
+	>>> bar
 	```

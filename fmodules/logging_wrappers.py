@@ -38,6 +38,15 @@ def _MakeHandler(handler: type[Handler], level=NOTSET, **kwargs) -> Handler:
 
 
 def getLogger(output_dir: Optional[Path] = None, *, root: bool = False, name: str = "") -> Logger:
+    """
+    `getLogger` will always return a logger with the same name(__package__)
+    These loggers change their behavior depending on the three arguments that passed to `getLogger` *last*
+
+    Args:
+        output_dir (Path, optional): Logger will Output a .log file to the specified path. Defaults to None.
+        root (bool, optional): The name of module that called `getLogger` last is added to log messages. Defaults to False.
+        name (str, optional): You can directly specify the name to be added to log messages. Defaults to "".
+    """
     if root:
         global _root
         _root = name if name else Path(previousframe(2).filename).stem
