@@ -7,102 +7,96 @@
 `pip install git+https://github.com/fierte-product-development/Standard-Library-Extension`
 
 # Modules
-* logging_wrappers.py
+## logging_wrappers
+`getLogger` will always return a logger with the same name(*\_\_package__*).  
+These loggers change their behavior depending on the three arguments that passed to `getLogger` **last**.  
 
-	`getLogger` will always return a logger with the same name(*\_\_package__*).  
-	These loggers change their behavior depending on the three arguments that passed to `getLogger` **last**.  
+- `output_dir` (Path, optional): Logger will Output a .log file to the specified path. Defaults to None.
+- `root` (bool, optional): The name of module that called `getLogger` last is added to log messages. Defaults to False.
+- `name` (str, optional): You can directly specify the name to be added to log messages. Defaults to "".
+```py
+# module A
+from fmodules.logging_wrappers import getLogger
 
-	- `output_dir` (Path, optional): Logger will Output a .log file to the specified path. Defaults to None.
-	- `root` (bool, optional): The name of module that called `getLogger` last is added to log messages. Defaults to False.
-	- `name` (str, optional): You can directly specify the name to be added to log messages. Defaults to "".
-	```py
-	# module A
-	from fmodules.logging_wrappers import getLogger
+logger = getLogger()
 
-	logger = getLogger()
+def log_info(msg: str):
+	logger.info(msg)
+```
 
-	def log_info(msg: str):
-	    logger.info(msg)
-	```
+```py
+# module B
+from fmodules.logging_wrappers import getLogger
+import A
 
-	```py
-	# module B
-	from fmodules.logging_wrappers import getLogger
-	import A
+logger = getLogger(root=True)
 
-	logger = getLogger(root=True)
+def log_debug(msg: str):
+	logger.debug(msg)
 
-	def log_debug(msg: str):
-	    logger.debug(msg)
+log_debug("foo")
+>>>   DEBUG 2021-07-01 20:51:36 [B] foo (8:log_debug)
+A.log_info("bar")
+>>>    INFO 2021-07-01 20:51:37 [B.A] bar
+```
 
-	log_debug("foo")
-	>>>   DEBUG 2021-07-01 20:51:36 [B] foo (8:log_debug)
-	A.log_info("bar")
-	>>>    INFO 2021-07-01 20:51:37 [B.A] bar
-	```
+## subprocess_wrappers
+subprocessWrappers is a wrapper of `run` and `Popen`.  
+This wrapper executes `run` and `Popen` with appropriate encoding on Windows/Linux and capture settings.  
+```py
+from fmodules.subprocess_wrappers import subprocessWrappers
 
-* subprocess_wrappers.py
+cp = subprocessWrappers.run("attrib", __file__, shell=True)
+print(cp.stdout)
+```
 
-	subprocessWrappers is a wrapper of `run` and `Popen`.  
-	This wrapper executes `run` and `Popen` with appropriate encoding on Windows/Linux and capture settings.  
-	```py
-	from fmodules.subprocess_wrappers import subprocessWrappers
+## pathlib_extensions
+`mkdir_hidden` makes hidden directory on Windows/Linux.  
+```py
+from pathlib import Path
+import fmodules.pathlib_extensions  # noqa
 
-	cp = subprocessWrappers.run("attrib", __file__, shell=True)
-	print(cp.stdout)
-	```
+path = Path(__file__).parent / "hidden_folder"
+path.mkdir_hidden()
+```
 
-* pathlib_extensions.py
+## dict_wrapper
+`AttrDict` is a `dict` allow their elements to be accessed both as keys and as attributes.  
+```py
+from fmodules.dict_wrapper import AttrDict
 
-	`mkdir_hidden` makes hidden directory on Windows/Linux.  
-	```py
-	from pathlib import Path
-	import fmodules.pathlib_extensions  # noqa
+attr_dict = AttrDict({"foo": "bar"})
+print(attr_dict["foo"])
+>>> bar
+print(attr_dict.foo)
+>>> bar
+```
 
-	path = Path(__file__).parent / "hidden_folder"
-	path.mkdir_hidden()
-	```
+## dataclasses_wrappers
+Automatically determines whether to use `defalut` or `default_factory` as the argument to the `field` function.  
+`Default` passes init in Ture, `Initial` passes init in False.  
+```py
+from dataclasses import dataclass
+from fmodules.dataclasses_wrappers import Default, Initial
 
-* dict_wrapper.py
+@dataclass
+class Foo:
+	foo: int = Default(0)  # If you pass T, use default
+	bar: list[str] = Initial(list)  # Pass type[T], use default_factory
+	baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
+```
 
-	`AttrDict` is a `dict` allow their elements to be accessed both as keys and as attributes.  
-	```py
-	from fmodules.dict_wrapper import AttrDict
+## inspect_wrappers
+`previousframe` returns the frame back from `currentframe()` specified by `back` of times."""
+```py
+from fmodules.inspect_wrappers import previousframe
 
-	attr_dict = AttrDict({"foo": "bar"})
-	print(attr_dict["foo"])
-	>>> bar
-	print(attr_dict.foo)
-	>>> bar
-	```
+def foo() -> str:
+	return previousframe(2).function
 
-* dataclasses_wrappers.py
+def bar() -> str:
+	return foo()
 
-	Automatically determines whether to use `defalut` or `default_factory` as the argument to the `field` function.  
-	`Default` passes init in Ture, `Initial` passes init in False.  
-	```py
-	from dataclasses import dataclass
-	from fmodules.dataclasses_wrappers import Default, Initial
-
-	@dataclass
-	class Foo:
-	    foo: int = Default(0)  # If you pass T, use default
-	    bar: list[str] = Initial(list)  # Pass type[T], use default_factory
-	    baz: bool = Initial()  # Pass nothing to Initial, it will be an instance variable with no initial value.
-	```
-
-* inspect_wrappers.py
-
-	`previousframe` returns the frame back from `currentframe()` specified by `back` of times."""
-	```py
-	from fmodules.inspect_wrappers import previousframe
-
-	def foo() -> str:
-	    return previousframe(2).function
-
-	def bar() -> str:
-	    return foo()
-
-	bar()
-	>>> bar
-	```
+bar()
+>>> bar
+```
