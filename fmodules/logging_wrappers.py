@@ -1,7 +1,7 @@
 from logging import Logger, getLogger as gL, Formatter, Handler, StreamHandler, FileHandler, LogRecord
 from logging import NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
 from inspect import currentframe, getframeinfo, getargvalues, isfunction, isclass
-from typing import TypeVar, Optional, Literal
+from typing import Optional, Literal
 from pathlib import Path
 import sys
 import json
@@ -10,7 +10,6 @@ from . import pathlib_extensions  # noqa
 from .dict_wrapper import AttrDict
 
 
-HandlerT = TypeVar("HandlerT", bound=Handler)
 _parent: Optional[Logger] = None
 _parent_cache: dict[str, Logger] = {}
 _children: dict[str, Logger] = {}
@@ -23,7 +22,7 @@ def _AddExtraMsg(record: LogRecord) -> Literal[True]:
     return True
 
 
-def _MakeHandler(handler: type[HandlerT], level=NOTSET, **kwargs) -> HandlerT:
+def _MakeHandler(handler: type[Handler], level=NOTSET, **kwargs) -> Handler:
     hndl = handler(**kwargs)
     hndl.setLevel(level)
     hndl.setFormatter(Formatter("%(levelname)8s %(asctime)s [%(name)s] %(message)s%(ex_msg)s"))
