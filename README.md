@@ -1,3 +1,8 @@
+[![Test](https://github.com/fierte-product-development/Standard-Library-Extension/actions/workflows/Test.yml/badge.svg)](https://github.com/fierte-product-development/Standard-Library-Extension/actions/workflows/Test.yml)
+[![python](https://img.shields.io/github/pipenv/locked/python-version/fierte-product-development/Standard-Library-Extension)](https://github.com/fierte-product-development/Standard-Library-Extension/blob/master/Pipfile)
+[![license](https://img.shields.io/github/license/fierte-product-development/Standard-Library-Extension.svg)](https://github.com/fierte-product-development/Standard-Library-Extension/blob/master/LICENSE)
+[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 # Install
 `pip install git+https://github.com/fierte-product-development/Standard-Library-Extension`
 
