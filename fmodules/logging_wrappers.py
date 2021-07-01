@@ -1,36 +1,49 @@
 from logging import Logger, getLogger as gL, Formatter, Handler, StreamHandler, FileHandler, LogRecord
 from logging import NOTSET, DEBUG, INFO, WARNING, ERROR, CRITICAL
-from inspect import currentframe, getframeinfo, getargvalues, isfunction, isclass
-from typing import Optional, Literal
+from time import strftime, localtime
+from inspect import getargvalues, isfunction, isclass
+from typing import Optional
 from pathlib import Path
 import sys
 import json
 
 from . import pathlib_extensions  # noqa
+from .inspect_wrappers import previousframe
 from .dict_wrapper import AttrDict
 
 
-_parent: Optional[Logger] = None
-_parent_cache: dict[str, Logger] = {}
-_children: dict[str, Logger] = {}
+_root: str = ""
 
 
-def _AddExtraMsg(record: LogRecord) -> Literal[True]:
-    record.ex_msg = ""
-    if record.levelno in (DEBUG, ERROR, CRITICAL):
-        record.ex_msg = f" ({record.lineno}:{record.funcName})"
-    return True
+class fFormatter(Formatter):
+    def format(self, rec: LogRecord) -> str:
+        lv = f"{rec.levelname:>8}"
+        time = strftime("%Y-%m-%d %X", localtime(rec.created))
+        mod = f"[{(_root + '.') if _root and _root != rec.module else ''}{rec.module}]"
+        msg = rec.getMessage()
+        msgs = [lv, time, mod, msg]
+        if rec.levelno in (DEBUG, ERROR, CRITICAL):
+            msgs.append(f"({rec.lineno}:{rec.funcName})")
+        return " ".join(msgs)
+
+
+_fmt = fFormatter()
 
 
 def _MakeHandler(handler: type[Handler], level=NOTSET, **kwargs) -> Handler:
     hndl = handler(**kwargs)
     hndl.setLevel(level)
-    hndl.setFormatter(Formatter("%(levelname)8s %(asctime)s [%(name)s] %(message)s%(ex_msg)s"))
-    hndl.addFilter(_AddExtraMsg)
+    hndl.setFormatter(_fmt)
     return hndl
 
 
-def _Setting(logger: Logger, output_dir: Optional[Path]) -> None:
+def getLogger(output_dir: Optional[Path] = None, *, root: bool = False, name: str = "") -> Logger:
+    if root:
+        global _root
+        _root = name if name else Path(previousframe(2).filename).stem
+    logger = gL(__package__)
+    for hndl in list(logger.handlers):
+        logger.removeHandler(hndl)
     logger.setLevel(INFO if output_dir else DEBUG)
     logger.addHandler(_MakeHandler(StreamHandler, level=DEBUG, stream=sys.stdout))
     logger.addHandler(_MakeHandler(StreamHandler, level=WARNING, stream=sys.stderr))
@@ -38,40 +51,7 @@ def _Setting(logger: Logger, output_dir: Optional[Path]) -> None:
         log_dir = (output_dir / "log").mkdir_hidden()
         log_file = log_dir / f"{output_dir.resolve().name}.log"
         logger.addHandler(_MakeHandler(FileHandler, filename=log_file, encoding="utf-8"))
-
-
-def _SetParent(child: Logger, parent: Logger) -> None:
-    child.name = ".".join([parent.name, child.name.split(".")[-1]])
-    child.setLevel(parent.level)
-    for hndl in list(child.handlers):
-        child.removeHandler(hndl)
-    for hndl in parent.handlers:
-        child.addHandler(hndl)
-
-
-def getLogger(name: str, output_dir: Optional[Path] = None, *, root: bool = False) -> Logger:
-    global _parent, _parent_cache, _children
-    if not root:
-        if child := _children.get(name):
-            return child
-        child = gL(name)
-        _SetParent(child, _parent) if _parent else _Setting(child, output_dir)
-        _children[name] = child
-        return child
-    if _parent and _parent.name not in _parent_cache:
-        _parent_cache[_parent.name] = _parent
-    if not (parent := _parent_cache.get(name)):
-        parent = gL(name)
-        _Setting(parent, output_dir)
-    _parent = parent
-    propagate()
-    return parent
-
-
-def propagate() -> None:
-    if _parent:
-        for child in _children.values():
-            _SetParent(child, _parent)
+    return logger
 
 
 def SetLogMessages() -> None:

@@ -1,26 +1,21 @@
 import pytest
-from typing import Optional
-from logging import Logger, FileHandler
 from pathlib import Path
+import re
 from ..logging_wrappers import getLogger
 
 from . import any_module
 
 
 class Test_getLogger:
-    def FindFileHandler(self, l: Logger) -> Optional[FileHandler]:
-        for h in l.handlers:
-            if isinstance(h, FileHandler):
-                return h
+    def test_LoggersInOtherModulesWillLogWithMyName_PassedTrueToRoot(self, capfd):
+        getLogger(root=True)
+        any_module.log("test")
+        out, _ = capfd.readouterr()
+        assert re.search(r"\[" + Path(__file__).stem + r"\." + "any_module" + r"\]", out)
 
-    @pytest.mark.order(1)
-    def test_SettingsOfChildLoggerWillNotChange_RootIsFalse(self):
-        my_logger = getLogger("parent_a", Path("a"))
-        assert self.FindFileHandler(my_logger)
-        assert not self.FindFileHandler(any_module.logger)
-
-    @pytest.mark.order(2)
-    def test_SettingsOfChildLoggerWillChange_RootIsTrue(self):
-        my_logger = getLogger("parent_b", Path("b"), root=True)
-        assert self.FindFileHandler(my_logger)
-        assert self.FindFileHandler(any_module.logger)
+    def test_LoggersInOtherModulesWillLogWithRootName_PassedRootAndName(self, capfd):
+        root_name = "hoge"
+        getLogger(root=True, name=root_name)
+        any_module.log("test")
+        out, _ = capfd.readouterr()
+        assert re.search(r"\[" + root_name + r"\." + "any_module" + r"\]", out)
