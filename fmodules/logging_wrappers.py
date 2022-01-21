@@ -24,6 +24,8 @@ class fFormatter(Formatter):
         msgs = [lv, time, mod, msg]
         if rec.levelno in (DEBUG, ERROR, CRITICAL):
             msgs.append(f"({rec.lineno}:{rec.funcName})")
+        if rec.stack_info:
+            msgs.append(f"\n{self.formatStack(rec.stack_info)}")
         return " ".join(msgs)
 
 
