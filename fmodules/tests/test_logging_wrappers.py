@@ -9,7 +9,7 @@ from . import any_module, raise_zero_div
 
 
 @pytest.fixture
-def fixed_time(mocker) -> None:
+def fixed_time(mocker) -> str:
     # `logging.time.time()` will be assigned to `LogRecord.created` attribute.
     # Therefore, log messages' asctime will be fixed.
     ctime = 1000000000
@@ -61,16 +61,44 @@ class Test_fFormatter:
 
 
 class Test_getLogger:
+    def test_OutputDebugLog_TakesSpecificLevel(self, capfd, fixed_time):
+        getLogger(root=True)
+        any_module.debug("test")
+        out, err = capfd.readouterr()
+        assert out == f"   DEBUG {fixed_time} [{Path(__file__).stem}.any_module] test (12:debug)\n"
+        assert err == ""
+
+    def test_OutputInfoLog_TakesSpecificLevel(self, capfd, fixed_time):
+        getLogger(root=True)
+        any_module.info("test")
+        out, err = capfd.readouterr()
+        assert out == f"    INFO {fixed_time} [{Path(__file__).stem}.any_module] test\n"
+        assert err == ""
+
+    def test_OutputWarningLog_TakesSpecificLevel(self, capfd, fixed_time):
+        getLogger(root=True)
+        any_module.warning("test")
+        out, err = capfd.readouterr()
+        assert out == ""
+        assert err == f" WARNING {fixed_time} [{Path(__file__).stem}.any_module] test\n"
+
+    def test_OutputErrorLog_TakesSpecificLevel(self, capfd, fixed_time):
+        getLogger(root=True)
+        any_module.error("test")
+        out, err = capfd.readouterr()
+        assert out == ""
+        assert err == f"   ERROR {fixed_time} [{Path(__file__).stem}.any_module] test (24:error)\n"
+
     def test_LoggersInOtherModulesWillLogWithMyName_PassedTrueToRoot(self, capfd, fixed_time):
         getLogger(root=True)
-        any_module.log("test")
+        any_module.info("test")
         out, _ = capfd.readouterr()
         assert out == f"    INFO {fixed_time} [{Path(__file__).stem}.any_module] test\n"
 
     def test_LoggersInOtherModulesWillLogWithRootName_PassedRootAndName(self, capfd, fixed_time):
         root_name = "hoge"
         getLogger(root=True, name=root_name)
-        any_module.log("test")
+        any_module.info("test")
         out, _ = capfd.readouterr()
         assert out == f"    INFO {fixed_time} [{root_name}.any_module] test\n"
 
