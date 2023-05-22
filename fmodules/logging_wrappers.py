@@ -16,7 +16,7 @@ _root: str = ""
 
 
 class LevelFilter:
-    def __init__(self, max_level):
+    def __init__(self, max_level: int):
         self.max_level = max_level
 
     def filter(self, record: LogRecord):
@@ -40,7 +40,7 @@ class fFormatter(Formatter):
 _fmt = fFormatter()
 
 
-def _MakeHandler(handler: type[Handler], min_level=NOTSET, max_level=CRITICAL, **kwargs) -> Handler:
+def _MakeHandler(handler: type[Handler], min_level: int = NOTSET, max_level: int = CRITICAL, **kwargs) -> Handler:
     hndl = handler(**kwargs)
     hndl.setLevel(min_level)
     hndl.setFormatter(_fmt)
