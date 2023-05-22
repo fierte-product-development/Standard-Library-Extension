@@ -79,11 +79,12 @@ class Test_getLogger:
         fmt_stack = mocker.spy(Formatter, "formatStack")
         with pytest.raises(ZeroDivisionError):
             raise_zero_div.raise_zero_div()
-        _, err = capfd.readouterr()
+        out, err = capfd.readouterr()
         fmt_stack.assert_called()
         expected = (
             f"   ERROR {fixed_time} "
             f"[{Path(__file__).stem}.raise_zero_div] zero div (12:raise_zero_div) \n"
             "Stack (most recent call last):\n"
         )
+        assert out == ""
         assert err.startswith(expected)
