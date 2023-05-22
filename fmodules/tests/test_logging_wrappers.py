@@ -89,6 +89,13 @@ class Test_getLogger:
         assert out == ""
         assert err == f"   ERROR {fixed_time} [{Path(__file__).stem}.any_module] test (24:error)\n"
 
+    def test_OutputCriticalLog_TakesSpecificLevel(self, capfd, fixed_time):
+        getLogger(root=True)
+        any_module.critical("test")
+        out, err = capfd.readouterr()
+        assert out == ""
+        assert err == f"CRITICAL {fixed_time} [{Path(__file__).stem}.any_module] test (28:critical)\n"
+
     def test_LoggersInOtherModulesWillLogWithMyName_PassedTrueToRoot(self, capfd, fixed_time):
         getLogger(root=True)
         any_module.info("test")

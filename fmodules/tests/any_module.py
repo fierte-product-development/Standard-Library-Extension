@@ -22,3 +22,7 @@ def warning(msg: str):
 
 def error(msg: str):
     logger.error(msg)
+
+
+def critical(msg: str):
+    logger.critical(msg)
