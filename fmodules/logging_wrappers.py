@@ -15,6 +15,14 @@ from .dict_wrapper import AttrDict
 _root: str = ""
 
 
+class LevelFilter:
+    def __init__(self, max_level):
+        self.max_level = max_level
+
+    def filter(self, record: LogRecord):
+        return record.levelno <= self.max_level
+
+
 class fFormatter(Formatter):
     def format(self, rec: LogRecord) -> str:
         lv = f"{rec.levelname:>8}"
@@ -32,10 +40,11 @@ class fFormatter(Formatter):
 _fmt = fFormatter()
 
 
-def _MakeHandler(handler: type[Handler], level=NOTSET, **kwargs) -> Handler:
+def _MakeHandler(handler: type[Handler], min_level=NOTSET, max_level=CRITICAL, **kwargs) -> Handler:
     hndl = handler(**kwargs)
-    hndl.setLevel(level)
+    hndl.setLevel(min_level)
     hndl.setFormatter(_fmt)
+    hndl.addFilter(LevelFilter(max_level))
     return hndl
 
 
@@ -56,8 +65,8 @@ def getLogger(output_dir: Optional[Path] = None, *, root: bool = False, name: st
     for hndl in list(logger.handlers):
         logger.removeHandler(hndl)
     logger.setLevel(INFO if output_dir else DEBUG)
-    logger.addHandler(_MakeHandler(StreamHandler, level=DEBUG, stream=sys.stdout))
-    logger.addHandler(_MakeHandler(StreamHandler, level=WARNING, stream=sys.stderr))
+    logger.addHandler(_MakeHandler(StreamHandler, min_level=DEBUG, max_level=INFO, stream=sys.stdout))
+    logger.addHandler(_MakeHandler(StreamHandler, min_level=WARNING, stream=sys.stderr))
     if output_dir:
         log_dir = (output_dir / "log").mkdir_hidden()
         log_file = log_dir / f"{output_dir.resolve().name}.log"

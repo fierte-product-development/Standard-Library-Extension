@@ -2,7 +2,7 @@ from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, LogRecord, Formatter
 import pytest
 from pathlib import Path
 from time import strftime, localtime
-from ..logging_wrappers import getLogger, fFormatter
+from ..logging_wrappers import getLogger, fFormatter, LevelFilter
 from .. import logging_wrappers
 
 from . import any_module, raise_zero_div
@@ -15,6 +15,23 @@ def fixed_time(mocker) -> None:
     ctime = 1000000000
     mocker.patch("logging.time.time", return_value=ctime)
     return strftime("%Y-%m-%d %X", localtime(ctime))
+
+
+class Test_LevelFilter:
+    @pytest.fixture
+    def lv_flt(self) -> LevelFilter:
+        return LevelFilter(max_level=INFO)
+
+    class Test_filter:
+        @pytest.mark.parametrize("lv_no", [DEBUG, INFO])
+        def test_OutputMsg_TakesSpecificLevel(self, lv_flt: LevelFilter, lv_no):
+            rec = LogRecord("name", lv_no, "pathname", 100, "msg", None, None, func="func")
+            assert lv_flt.filter(rec)
+
+        @pytest.mark.parametrize("lv_no", [WARNING, ERROR, CRITICAL])
+        def test_DoesNothing_TakesSpecificLevel(self, lv_flt: LevelFilter, lv_no):
+            rec = LogRecord("name", lv_no, "pathname", 100, "msg", None, None, func="func")
+            assert lv_flt.filter(rec) is False
 
 
 class Test_fFormatter:
@@ -62,12 +79,11 @@ class Test_getLogger:
         fmt_stack = mocker.spy(Formatter, "formatStack")
         with pytest.raises(ZeroDivisionError):
             raise_zero_div.raise_zero_div()
-        out, err = capfd.readouterr()
+        _, err = capfd.readouterr()
         fmt_stack.assert_called()
         expected = (
             f"   ERROR {fixed_time} "
             f"[{Path(__file__).stem}.raise_zero_div] zero div (12:raise_zero_div) \n"
             "Stack (most recent call last):\n"
         )
-        assert out.startswith(expected)
         assert err.startswith(expected)
