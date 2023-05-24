@@ -8,5 +8,21 @@ from ..logging_wrappers import getLogger
 logger: Logger = getLogger()
 
 
-def log(msg: str):
+def debug(msg: str):
+    logger.debug(msg)
+
+
+def info(msg: str):
     logger.info(msg)
+
+
+def warning(msg: str):
+    logger.warning(msg)
+
+
+def error(msg: str):
+    logger.error(msg)
+
+
+def critical(msg: str):
+    logger.critical(msg)
