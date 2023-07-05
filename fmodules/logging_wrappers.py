@@ -64,7 +64,7 @@ def getLogger(output_dir: Optional[Path] = None, *, root: bool = False, name: st
     logger = gL(__package__)
     for hndl in list(logger.handlers):
         logger.removeHandler(hndl)
-    logger.setLevel(INFO if output_dir else DEBUG)
+    logger.setLevel(DEBUG)
     logger.addHandler(_MakeHandler(StreamHandler, min_level=DEBUG, max_level=INFO, stream=sys.stdout))
     logger.addHandler(_MakeHandler(StreamHandler, min_level=WARNING, stream=sys.stderr))
     if output_dir:
