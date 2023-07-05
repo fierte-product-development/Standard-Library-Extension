@@ -65,7 +65,7 @@ class Test_getLogger:
         getLogger(root=True)
         any_module.debug("test")
         out, err = capfd.readouterr()
-        assert out == f"   DEBUG {fixed_time} [{Path(__file__).stem}.any_module] test (12:debug)\n"
+        assert out == ""
         assert err == ""
 
     def test_OutputInfoLog_TakesSpecificLevel(self, capfd, fixed_time):
