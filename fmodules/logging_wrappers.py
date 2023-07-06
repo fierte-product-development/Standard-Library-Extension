@@ -64,13 +64,13 @@ def getLogger(output_dir: Optional[Path] = None, *, root: bool = False, name: st
     logger = gL(__package__)
     for hndl in list(logger.handlers):
         logger.removeHandler(hndl)
-    logger.setLevel(INFO if output_dir else DEBUG)
-    logger.addHandler(_MakeHandler(StreamHandler, min_level=DEBUG, max_level=INFO, stream=sys.stdout))
+    logger.setLevel(DEBUG)
+    logger.addHandler(_MakeHandler(StreamHandler, min_level=INFO, max_level=INFO, stream=sys.stdout))
     logger.addHandler(_MakeHandler(StreamHandler, min_level=WARNING, stream=sys.stderr))
     if output_dir:
         log_dir = (output_dir / "log").mkdir_hidden()
         log_file = log_dir / f"{output_dir.resolve().name}.log"
-        logger.addHandler(_MakeHandler(FileHandler, filename=log_file, encoding="utf-8"))
+        logger.addHandler(_MakeHandler(FileHandler, filename=log_file, min_level=DEBUG, encoding="utf-8"))
     return logger
 
 

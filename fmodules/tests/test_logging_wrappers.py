@@ -61,12 +61,18 @@ class Test_fFormatter:
 
 
 class Test_getLogger:
-    def test_OutputDebugLog_TakesSpecificLevel(self, capfd, fixed_time):
+    def test_DoesNotOutputLogToStream_CalledDebugLogMethod(self, capfd):
         getLogger(root=True)
         any_module.debug("test")
         out, err = capfd.readouterr()
-        assert out == f"   DEBUG {fixed_time} [{Path(__file__).stem}.any_module] test (12:debug)\n"
+        assert out == ""
         assert err == ""
+
+    def test_OutputLogToFile_CalledDebugLogMethod(self, fixed_time, tmp_path: Path):
+        getLogger(tmp_path, root=True)
+        any_module.debug("test")
+        log_file = tmp_path / ".log" / f"{tmp_path.resolve().name}.log"
+        assert log_file.read_text() == f"   DEBUG {fixed_time} [{Path(__file__).stem}.any_module] test (12:debug)\n"
 
     def test_OutputInfoLog_TakesSpecificLevel(self, capfd, fixed_time):
         getLogger(root=True)
